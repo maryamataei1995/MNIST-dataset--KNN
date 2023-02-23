@@ -1,0 +1,147 @@
+# In[1]:
+
+
+# Import the required libraries
+from sklearn import datasets
+from sklearn import svm
+import keras
+import tensorflow as tf
+from keras.datasets import mnist
+from matplotlib import pyplot
+import numpy as np
+import pandas as pd
+import operator 
+from operator import itemgetter
+from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import accuracy_score
+
+
+# In[2]:
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+data_path = "C:\\Users\\MIT\\Goalearn\\Task3\\"
+train_data = np.loadtxt(data_path + "mnist_train.csv", 
+                        delimiter=",")
+test_data = np.loadtxt(data_path + "mnist_test.csv", 
+                       delimiter=",") 
+
+
+# In[3]:
+
+
+#test_data[test_data==255]
+print(train_data.shape)
+
+print(test_data.shape)
+
+
+# In[4]:
+
+
+fac = 0.99 / 255
+X_train = np.asfarray(train_data[:, 1:]) * fac + 0.01
+X_test = np.asfarray(test_data[:, 1:]) * fac + 0.01
+
+Y_train = np.asfarray(train_data[:, :1])
+Y_test = np.asfarray(test_data[:, :1])
+
+
+# In[5]:
+
+
+for i in range(10):
+    img = X_train[i].reshape((28,28))
+    plt.imshow(img, cmap="Greys")
+    plt.show()
+
+
+# In[6]:
+
+
+print('X_train: ' + str(X_train.shape))
+print('Y_train: ' + str(Y_train.shape))
+print('X_test:  '  + str(X_test.shape))
+print('Y_test:  '  + str(Y_test.shape))
+
+
+# In[9]:
+
+
+from sklearn.metrics import confusion_matrix,plot_roc_curve, classification_report
+from sklearn.metrics import mean_squared_log_error,mean_squared_error,mean_absolute_error,mean_absolute_percentage_error
+import math
+from sklearn.neighbors import KNeighborsClassifier
+from mlxtend.plotting import plot_confusion_matrix
+
+
+def KNN(X_train, Y_train,Max):
+    for i in range(3,Max+1):
+        
+        knn = KNeighborsClassifier(n_neighbors= i , p=1 )
+        print('K =',i , 'p = 1')
+        
+        knn.fit(X_train , Y_train)
+        
+        # make predictions on test set
+        y_pred=knn.predict(X_test)
+
+        print('Training set score: {:.4f}'.format(knn.score(X_train, Y_train)))
+
+        print('Test set score: {:.4f}'.format(knn.score(X_test, Y_test)))
+        print("Accuracy score (validation): {0:.3f}".format(knn.score(X_test, Y_test)))
+
+        #check MSE & RMSE 
+        mse =mean_squared_error(Y_test, y_pred)
+        print('Mean Squared Error : '+ str(mse))
+        rmse = math.sqrt(mean_squared_error(Y_test, y_pred))
+        print('Root Mean Squared Error : '+ str(rmse))
+
+
+        matrix = classification_report(Y_test,y_pred )
+        print(matrix)
+
+        # calculating and plotting the confusion matrix
+
+        cm1 = confusion_matrix(Y_test,y_pred)
+        plot_confusion_matrix(conf_mat=cm1,show_absolute=True,
+                                        show_normed=True,
+                                        colorbar=True)
+        plt.show()
+        #------------------------------------------------------------------------------
+        knn = KNeighborsClassifier(n_neighbors= i , p=2 )
+        print('K =',i , 'p = 2')
+        
+        knn.fit(X_train , Y_train)
+        # make predictions on test set
+        y_pred=knn.predict(X_test)
+
+        print('Training set score: {:.4f}'.format(knn.score(X_train, Y_train)))
+
+        print('Test set score: {:.4f}'.format(knn.score(X_test, Y_test)))
+        print("Accuracy score (validation): {0:.3f}".format(knn.score(X_test, Y_test)))
+
+        #check MSE & RMSE 
+        mse =mean_squared_error(Y_test, y_pred)
+        print('Mean Squared Error : '+ str(mse))
+        rmse = math.sqrt(mean_squared_error(Y_test, y_pred))
+        print('Root Mean Squared Error : '+ str(rmse))
+
+
+        matrix = classification_report(Y_test,y_pred )
+        print(matrix)
+
+        # calculating and plotting the confusion matrix
+
+        cm1 = confusion_matrix(Y_test,y_pred)
+        plot_confusion_matrix(conf_mat=cm1,show_absolute=True,
+                                        show_normed=True,
+                                        colorbar=True)
+        plt.show()
+
+
+# In[10]:
+
+
+KNN(X_train, Y_train, Max=5)
